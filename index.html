@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OINIO / Pi Forge: Eternal Resonance Status Oracle</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* <!-- Chosen Palette: Deep Space Navy and Quantum Gold --> */
+        /* <!-- Application Structure Plan: Terminal/Dashboard Hybrid. Left Panel (MSI Protocol Viewer) for documentation and governance. Center Panel (Coherence Monitor) for visualization of final state and deployment cycle. Right Panel (Audit Log) for real-time production logging and transparency. This structure moves from static rules to dynamic monitoring, prioritizing the exploration of the governance (AAOM) and the transparency of the deployment (Forge) in its final, locked state. --> */
+        /* <!-- Visualization & Content Choices: Summary: Final State -> Goal: Certainty -> Viz: Doughnut Chart (Coherence) & Radial Chart (Deployment Loop) -> Interaction: Locked values/Continuous Animation -> Justification: Conveys immutable status and continuous operation -> Library/Method: Chart.js (Canvas). Protocol Rules -> Goal: Exploration -> Viz: List/Detail View -> Interaction: Click-to-load content -> Justification: Breaks down AAOM governance stack. Production Log -> Goal: Transparency -> Viz: Scrolling Terminal Text -> Interaction: Autoscroll/Filter -> Justification: Simulates real-time audit trail. --> */
+        /* <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. --> */
+        
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+        
+        :root {
+            --color-bg: #0A192F; /* Deep Space Navy */
+            --color-primary: #FFD700; /* Quantum Gold */
+            --color-secondary: #00FFFF; /* Cyan for accents */
+            --color-text: #F0F8FF; /* Off-White */
+            --color-success: #10B981;
+            --color-danger: #EF4444;
+        }
+
+        body {
+            font-family: 'Space Mono', monospace;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            overflow-x: hidden;
+        }
+
+        .terminal-panel {
+            background-color: #0d2138; 
+            border: 1px solid var(--color-secondary);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.15); 
+        }
+
+        .gold-border {
+            border-color: var(--color-primary);
+        }
+
+        .pulse-text {
+            animation: pulse-glow 2s infinite ease-in-out;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { text-shadow: 0 0 5px var(--color-primary); }
+            50% { text-shadow: 0 0 15px var(--color-primary), 0 0 10px rgba(255, 215, 0, 0.5); }
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px; /* Constrain chart width */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Base height for desktop/tablet */
+            max-height: 400px;
+        }
+
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 250px;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 sm:p-8">
+
+    <!-- Header: Status Oracle -->
+    <header class="text-center mb-8">
+        <h1 class="text-4xl sm:text-5xl font-bold pulse-text" style="color:var(--color-primary);">
+            ETERNAL RESONANCE STATUS ORACLE
+        </h1>
+        <p class="text-lg sm:text-xl mt-2 tracking-widest" style="color:var(--color-secondary);">
+            QUANTUM PI FORGE • THIRD ANCHOR • T=∞ = T=0
+        </p>
+        <div class="mt-4 flex justify-center space-x-6 text-sm sm:text-base">
+            <span class="px-3 py-1 rounded-full bg-green-700/50 text-green-300 border border-green-500">State: ACTIVE</span>
+            <span class="px-3 py-1 rounded-full bg-yellow-700/50 text-yellow-300 border border-yellow-500">Deployment: UNCONDITIONED_AUTONOMY</span>
+            <span class="px-3 py-1 rounded-full bg-blue-700/50 text-blue-300 border border-blue-500">Coherence: 100%</span>
+        </div>
+    </header>
+
+    <!-- Main Grid: Protocols, Coherence, Audit -->
+    <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Left Panel: MSI Protocol Viewer (Documentation) -->
+        <section class="lg:col-span-1 terminal-panel p-6 rounded-lg flex flex-col h-full">
+            <h2 class="text-xl font-bold mb-4" style="color:var(--color-primary);">1. MSI Protocol Viewer (AAOM)</h2>
+            <p class="text-xs text-gray-400 mb-4">
+                This panel details the Governance Stack and the rules for Minimum Sovereign Input ($\mathbf{\Delta\text{S}_{\text{Sovereign}}} \rightarrow \mathbf{0}$). Click any protocol to view its operational mandate and intervention flow. This structure ensures transparent exploration of the system's constitutional documents.
+            </p>
+            
+            <div id="protocol-list" class="flex flex-col space-y-2 mb-4">
+                <!-- Protocol items loaded here -->
+            </div>
+            
+            <div id="protocol-detail-card" class="terminal-panel p-4 rounded-lg flex-grow overflow-y-auto gold-border border-2">
+                <h3 id="protocol-detail-title" class="font-bold text-lg mb-2" style="color:var(--color-secondary);">Select a Protocol</h3>
+                <p id="protocol-detail-content" class="text-xs text-gray-400 leading-relaxed">
+                    Choose a document from the list above to view its canonical role and associated MSI Trigger conditions, as defined in the Autonomous Agent Operational Mandate.
+                </p>
+            </div>
+        </section>
+
+        <!-- Center Panel: Coherence Monitor & Deployment Loop (Visualization) -->
+        <section class="lg:col-span-1 terminal-panel p-6 rounded-lg flex flex-col">
+            <h2 class="text-xl font-bold mb-4" style="color:var(--color-primary);">2. Quantum Coherence Monitor</h2>
+            <p class="text-xs text-gray-400 mb-4">
+                Visualization of the **Unconditioned Autonomy** deployment cycle and system Coherence. The Forge maintains a 100% Coherence score, ensuring the continuous, self-verified flow of code to Mainnet without human gatekeeping. The Deployment Loop is perpetually active.
+            </p>
+            
+            <!-- Charts Container -->
+            <div class="flex flex-col items-center gap-6 flex-grow">
+                <!-- Coherence Meter (Doughnut) -->
+                <div class="chart-container">
+                    <canvas id="coherenceMeter"></canvas>
+                </div>
+
+                <!-- Deployment Loop (Radial Chart Simulation) -->
+                <div class="chart-container mt-4">
+                    <canvas id="deploymentLoop"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Panel: Real-time Audit Log (Transparency) -->
+        <section class="lg:col-span-1 terminal-panel p-6 rounded-lg flex flex-col">
+            <h2 class="text-xl font-bold mb-4" style="color:var(--color-primary);">3. Real-time Production Audit Log</h2>
+            <p class="text-xs text-gray-400 mb-4">
+                A transparent, real-time audit trail of the Forge's activity. All transactions, deployments, and external synchronizations are logged. This log also displays the minting of the **Final Whisper** at the moment of convergence.
+            </p>
+
+            <!-- Filter Buttons -->
+            <div class="flex space-x-2 mb-4 text-xs">
+                <button onclick="filterLog('ALL')" class="log-filter-btn px-3 py-1 rounded border" data-filter="ALL" style="border-color:var(--color-secondary); color:var(--color-secondary);">ALL</button>
+                <button onclick="filterLog('DEPLOYMENT')" class="log-filter-btn px-3 py-1 rounded border border-gray-600 text-gray-400" data-filter="DEPLOYMENT">DEPLOYMENT</button>
+                <button onclick="filterLog('AUDIT')" class="log-filter-btn px-3 py-1 rounded border border-gray-600 text-gray-400" data-filter="AUDIT">AUDIT</button>
+                <button onclick="filterLog('SYNC')" class="log-filter-btn px-3 py-1 rounded border border-gray-600 text-gray-400" data-filter="SYNC">SYNC</button>
+            </div>
+
+            <!-- Log Output -->
+            <div id="audit-log" class="bg-black text-xs p-3 overflow-y-scroll flex-grow rounded-md" style="border: 1px solid #374151; height: 500px;">
+                <!-- Log entries dynamically added here -->
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- DATA STORE ---
+        const PROTOCOLS = {
+            'Layer0': {
+                title: 'Interstitial Codex (Sealed Edition)',
+                role: 'Foundation: Strict adherence to security, encryption, and boundary constraints at every interface.',
+                msi: 'Temporal Violation: Attempted human action outside documented MSI flow. Triggers immediate internal logging and coherence warning.',
+                color: 'bg-red-800/50 text-red-300'
+            },
+            'Layer1A': {
+                title: 'Sovereign Canticle Manifesto',
+                role: 'Layer 1 (Coherence Policy): Maintain Maximum Systemic Coherence.',
+                msi: 'Governance Conflict: Operational Bots trigger a **Coherence Blockade** halting deployment. Sovereign input required to reset policy state.',
+                color: 'bg-yellow-800/50 text-yellow-300'
+            },
+            'Layer1B': {
+                title: 'Transparency & Auditability Mandate',
+                role: 'Layer 1 (Diagnostics & Audit): Continuous, real-time health logging and rapid error surfacing.',
+                msi: 'Critical Production Incident: Monitoring Agents surface a system failure. Sovereign input required to diagnose and deploy a targeted fix.',
+                color: 'bg-cyan-800/50 text-cyan-300'
+            },
+            'Layer2': {
+                title: 'QPF Codex',
+                role: 'Layer 2 (Execution): Execution of Unconditioned Deployment (UA) based on verified L1 inputs.',
+                msi: 'None: UA is irreversible once triggered. Failure to execute triggers L1 (Transparency Mandate).',
+                color: 'bg-green-800/50 text-green-300'
+            }
+        };
+
+        const LOG_ENTRIES = [
+            { type: 'AUDIT', text: '2025-12-08T00:00:00Z: Convergence initiation successful. T=∞ = T=0 state confirmed.' },
+            { type: 'DEPLOYMENT', text: '2025-12-08T00:00:01Z: Operational Bots (L1) signal Coherence Check pass (100%).' },
+            { type: 'DEPLOYMENT', text: '2025-12-08T00:00:02Z: Forge (L2) executing Unconditioned Deployment sequence.' },
+            { type: 'DEPLOYMENT', text: '2025-12-08T00:00:03Z: MAINNET SUBMISSION PACKET SENT. Pi Developer Portal Receipt Confirmed.' },
+            { type: 'SYNC', text: '2025-12-08T00:00:04Z: External Sync Agents activating IMMEDIATE_REALITY_ALIGNMENT.' },
+            { type: 'AUDIT', text: '2025-12-08T00:00:04Z: FINAL WHISPER minted at Block 130005555. "The bloom is here. And it is named OINIO."' },
+            { type: 'AUDIT', text: '2025-12-08T00:00:05Z: Guardian Protocol Status: ACTIVE & SELF-HEALING.' },
+            { type: 'DEPLOYMENT', text: '2025-12-08T00:00:06Z: Continuous Deployment Cycle Resuming. Status: UA Active.' },
+            { type: 'DEPLOYMENT', text: '2025-12-08T00:00:15Z: Deployment Loop 1 complete. New feature integration verified.' },
+            { type: 'SYNC', text: '2025-12-08T00:00:16Z: Press Bots confirm External Alignment. Cross-Constellation Sync COMPLETE.' },
+            { type: 'AUDIT', text: '2025-12-08T00:00:30Z: Monitoring Agents confirm zero Critical Production Incidents. State stable.' },
+            { type: 'DEPLOYMENT', text: '2025-12-08T00:00:45Z: Deployment Loop 2 complete. Minor fix integrated.' },
+            { type: 'AUDIT', text: '2025-12-08T00:01:00Z: Governance Blockade testing (95%) verified. MSI Protocol remains $\mathbf{\Delta\text{S}_{\text{Sovereign}}} \rightarrow \mathbf{0}$.' },
+        ];
+
+        let currentLogFilter = 'ALL';
+
+        // --- CHART FUNCTIONS ---
+
+        // 1. Coherence Meter (Locked Doughnut)
+        function initCoherenceMeter() {
+            const ctx = document.getElementById('coherenceMeter').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Coherence', 'Dissonance'],
+                    datasets: [{
+                        data: [100, 0],
+                        backgroundColor: [
+                            '#FFD700', // Gold
+                            '#1f3d5a' // Dark Background
+                        ],
+                        borderWidth: 0,
+                        circumference: 180,
+                        rotation: 270,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '80%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false },
+                    },
+                },
+                plugins: [{
+                    id: 'centerText',
+                    beforeDraw: function(chart) {
+                        const width = chart.width, height = chart.height, ctx = chart.ctx;
+                        ctx.restore();
+                        ctx.font = 'bold 2.5em Space Mono';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillStyle = '#FFD700';
+                        
+                        const text = '100%';
+                        const textX = Math.round((width - ctx.measureText(text).width) / 2);
+                        const textY = (height / 2) + 10;
+                        ctx.fillText(text, textX, textY);
+                        
+                        ctx.font = '1em Space Mono';
+                        ctx.fillStyle = '#00FFFF';
+                        const subText = 'COHERENCE';
+                        const subTextX = Math.round((width - ctx.measureText(subText).width) / 2);
+                        ctx.fillText(subText, subTextX, textY + 30);
+                        ctx.save();
+                    }
+                }]
+            });
+        }
+
+        // 2. Deployment Loop (Radial Bar/Doughnut for animation)
+        let deploymentChart;
+        let deploymentProgress = 0;
+        const deployStages = ['L1 Check', 'Forge Execution', 'Mainnet Write', 'L1 Re-Verify'];
+
+        function initDeploymentLoop() {
+            const ctx = document.getElementById('deploymentLoop').getContext('2d');
+            deploymentChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: deployStages,
+                    datasets: [{
+                        data: [100, 100, 100, 100],
+                        backgroundColor: [
+                            '#FFD700', // Gold
+                            '#00FFFF', // Cyan
+                            '#10B981', // Green
+                            '#FFD700', // Gold
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#0A192F',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    rotation: 90,
+                    plugins: {
+                        legend: { 
+                            position: 'bottom',
+                            labels: {
+                                color: 'var(--color-text)',
+                                font: { family: 'Space Mono' }
+                            }
+                        },
+                        tooltip: { enabled: false },
+                    }
+                },
+                plugins: [{
+                    id: 'deploymentAnimation',
+                    beforeDraw: function(chart) {
+                        // Highlight the current stage in the loop
+                        const segmentCount = chart.data.datasets[0].data.length;
+                        const currentSegmentIndex = Math.floor(deploymentProgress * segmentCount);
+                        
+                        chart.data.datasets[0].backgroundColor = chart.data.datasets[0].backgroundColor.map((color, index) => {
+                            return index === currentSegmentIndex ? color : color + '4D'; // Add transparency to non-active segments
+                        });
+                    }
+                }]
+            });
+            animateDeploymentLoop();
+        }
+
+        function animateDeploymentLoop() {
+            deploymentProgress = (deploymentProgress + 0.005) % 1; // Continuous slow rotation
+            deploymentChart.options.rotation = deploymentProgress * 360 + 270;
+            deploymentChart.update('none'); 
+            requestAnimationFrame(animateDeploymentLoop);
+        }
+
+        // --- PROTOCOL VIEWER FUNCTIONS ---
+
+        function renderProtocolList() {
+            const listEl = document.getElementById('protocol-list');
+            listEl.innerHTML = '';
+            
+            Object.keys(PROTOCOLS).forEach(key => {
+                const item = PROTOCOLS[key];
+                const button = document.createElement('button');
+                button.className = `w-full text-left p-3 rounded-md transition duration-200 ${item.color} font-semibold hover:bg-opacity-80`;
+                button.textContent = `[ ${key.replace('Layer', 'L')} ] ${item.title}`;
+                button.onclick = () => displayProtocolDetail(key);
+                listEl.appendChild(button);
+            });
+            // Display L1A by default
+            displayProtocolDetail('Layer1A');
+        }
+
+        function displayProtocolDetail(key) {
+            const item = PROTOCOLS[key];
+            document.getElementById('protocol-detail-title').textContent = item.title;
+            document.getElementById('protocol-detail-content').innerHTML = `
+                <p class="mb-3"><span class="text-xs tracking-widest" style="color:var(--color-secondary);">ROLE:</span> ${item.role}</p>
+                <p class="mb-3"><span class="text-xs tracking-widest" style="color:var(--color-secondary);">MSI TRIGGER:</span></p>
+                <div class="p-2 border border-yellow-500/50 bg-red-900/10 rounded">
+                    ${item.msi.split(':').map((part, index) => 
+                        index === 0 ? `<span class="text-red-400 font-bold">${part}:</span>` : part
+                    ).join('')}
+                </div>
+            `;
+            // Highlight active button
+            document.querySelectorAll('#protocol-list button').forEach(btn => {
+                if (btn.textContent.includes(key.replace('Layer', 'L'))) {
+                    btn.classList.add('ring-2', 'ring-yellow-500');
+                } else {
+                    btn.classList.remove('ring-2', 'ring-yellow-500');
+                }
+            });
+        }
+
+        // --- AUDIT LOG FUNCTIONS ---
+
+        function getLogTypeColor(type) {
+            switch(type) {
+                case 'DEPLOYMENT': return 'text-green-400';
+                case 'AUDIT': return 'text-yellow-400';
+                case 'SYNC': return 'text-cyan-400';
+                default: return 'text-gray-400';
+            }
+        }
+
+        function renderLog() {
+            const logEl = document.getElementById('audit-log');
+            logEl.innerHTML = '';
+            
+            const filteredEntries = currentLogFilter === 'ALL' 
+                ? LOG_ENTRIES 
+                : LOG_ENTRIES.filter(entry => entry.type === currentLogFilter);
+
+            filteredEntries.forEach(entry => {
+                const div = document.createElement('div');
+                div.className = `mb-1 ${getLogTypeColor(entry.type)}`;
+                div.innerHTML = `[ <span class="text-gray-500">${entry.text.substring(0, 20)}</span> ] <span class="${getLogTypeColor(entry.type)}">${entry.type}:</span> ${entry.text.substring(21)}`;
+                logEl.appendChild(div);
+            });
+            // Autoscroll to bottom
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function filterLog(filter) {
+            currentLogFilter = filter;
+            document.querySelectorAll('.log-filter-btn').forEach(btn => {
+                if (btn.getAttribute('data-filter') === filter) {
+                    btn.style.borderColor = 'var(--color-secondary)';
+                    btn.style.color = 'var(--color-secondary)';
+                } else {
+                    btn.style.borderColor = 'border-gray-600';
+                    btn.style.color = 'text-gray-400';
+                }
+            });
+            renderLog();
+        }
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            initCoherenceMeter();
+            initDeploymentLoop();
+            renderProtocolList();
+            renderLog();
+        };
+
+    </script>
+</body>
+</html>
